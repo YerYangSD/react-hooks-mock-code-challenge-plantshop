@@ -37,6 +37,12 @@ function NewPlantForm({ onAddPlant }) {
     fetch("http://localhost:6001/plants", configObj)
       .then(r => r.json())
       .then(plant => onAddPlant(plant))
+
+    setFormData({
+      name: "",
+      image: "",
+      price: 0,
+    })
   }
 
   return (
