@@ -1,12 +1,25 @@
 import React, { useState } from "react";
 
 function PlantCard({ plant, onUpdatePlant, onDeletePlant }) {
-  const { id, name, image, price } = plant
-  const [inStock, setInStock] = useState(true)
+  const { id, name, image, price, in_stock } = plant
+  const [inStock, setInStock] = useState(in_stock)
   const [updatedPrice, setUpdatedPrice] = useState(0)
 
-  function handleClick() {
-    setInStock((inStock) => !inStock)
+  function handleStockClick() {
+    const configObj = {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ in_stock: !inStock })
+    }
+
+    fetch(`http://localhost:6001/plants/${id}`, configObj)
+      .then(r => r.json())
+      .then((updatedPlant) => {
+        setInStock(updatedPlant.in_stock)
+        onUpdatePlant(updatedPlant)
+      })
   }
 
   function handlePriceChange(e) {
@@ -49,9 +62,9 @@ function PlantCard({ plant, onUpdatePlant, onDeletePlant }) {
       <h4>{name}</h4>
       <p>Price: ${price.toFixed(2)}</p>
       {inStock ? (
-        <button className="primary" onClick={handleClick}>In Stock</button>
+        <button className="primary" onClick={handleStockClick}>In Stock</button>
       ) : (
-        <button onClick={handleClick}>Out of Stock</button>
+        <button onClick={handleStockClick}>Out of Stock</button>
       )}
       <button onClick={handleDelete}>Delete</button>
       <form onSubmit={handleSubmit}>
